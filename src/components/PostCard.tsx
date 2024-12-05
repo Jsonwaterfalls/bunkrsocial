@@ -5,7 +5,7 @@ import { MessageSquare } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { CommentSection } from "./CommentSection";
 import { PostReactions } from "./PostReactions";
-import { useAuth } from "@supabase/auth-helpers-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface PostCardProps {
   post: {
@@ -23,7 +23,14 @@ interface PostCardProps {
 
 export const PostCard = ({ post }: PostCardProps) => {
   const [showComments, setShowComments] = useState(false);
-  const { user } = useAuth();
+  const [user, setUser] = useState<any>(null);
+
+  // Get the current user on component mount
+  useState(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user);
+    });
+  });
 
   const getVerdictColor = (verdict: string) => {
     switch (verdict.toLowerCase()) {

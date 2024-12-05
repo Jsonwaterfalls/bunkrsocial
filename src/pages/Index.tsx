@@ -7,14 +7,13 @@ import { supabase } from "@/integrations/supabase/client";
 const Index = () => {
   const [session, setSession] = useState<any>(null);
   const [verificationResults, setVerificationResults] = useState<any[]>([]);
+  const [currentStatement, setCurrentStatement] = useState<string>("");
 
   useEffect(() => {
-    // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
     });
 
-    // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -24,24 +23,9 @@ const Index = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const handleVerify = async (statement: string) => {
-    // Simulated verification results - this will be replaced with actual API calls
-    const mockResults = [
-      {
-        model: "GPT-4",
-        confidence: 95,
-        reasoning: "Based on extensive research and factual evidence...",
-        verdict: "true" as const,
-      },
-      {
-        model: "Claude",
-        confidence: 85,
-        reasoning: "According to multiple reliable sources...",
-        verdict: "true" as const,
-      },
-    ];
-    
-    setVerificationResults(mockResults);
+  const handleVerify = (statement: string, results: any[]) => {
+    setCurrentStatement(statement);
+    setVerificationResults(results);
   };
 
   if (!session) {
@@ -63,7 +47,7 @@ const Index = () => {
         <VerificationForm onVerify={handleVerify} />
         {verificationResults.length > 0 && (
           <ResultCard
-            statement="This is a test statement"
+            statement={currentStatement}
             results={verificationResults}
           />
         )}

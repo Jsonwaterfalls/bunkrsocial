@@ -6,7 +6,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 interface VerificationFormProps {
-  onVerify: (statement: string) => void;
+  onVerify: (statement: string, results: any[]) => void;
 }
 
 export const VerificationForm = ({ onVerify }: VerificationFormProps) => {
@@ -37,6 +37,7 @@ export const VerificationForm = ({ onVerify }: VerificationFormProps) => {
         return;
       }
 
+      // Create post first
       const { data: post, error: postError } = await supabase
         .from('posts')
         .insert([
@@ -49,18 +50,37 @@ export const VerificationForm = ({ onVerify }: VerificationFormProps) => {
         throw postError;
       }
 
-      onVerify(statement);
+      // Call verification function
+      const response = await fetch('/functions/v1/verify-statement', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({
+          statement: statement.trim(),
+          postId: post.id
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Verification failed');
+      }
+
+      const { results } = await response.json();
+      
+      onVerify(statement, results);
       setStatement("");
       
       toast({
         title: "Success",
-        description: "Your statement has been submitted for verification",
+        description: "Your statement has been verified",
       });
     } catch (error) {
-      console.error('Error creating post:', error);
+      console.error('Error:', error);
       toast({
         title: "Error",
-        description: "Failed to submit statement for verification",
+        description: "Failed to verify statement",
         variant: "destructive",
       });
     } finally {

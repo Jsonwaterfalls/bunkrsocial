@@ -51,25 +51,16 @@ export const VerificationForm = ({ onVerify }: VerificationFormProps) => {
       }
 
       // Call verification function
-      const response = await fetch('/functions/v1/verify-statement', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY}`,
-        },
-        body: JSON.stringify({
+      const { data, error } = await supabase.functions.invoke('verify-statement', {
+        body: {
           statement: statement.trim(),
           postId: post.id
-        }),
+        },
       });
 
-      if (!response.ok) {
-        throw new Error('Verification failed');
-      }
-
-      const { results } = await response.json();
+      if (error) throw error;
       
-      onVerify(statement, results);
+      onVerify(statement, data.results);
       setStatement("");
       
       toast({

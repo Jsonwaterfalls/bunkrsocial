@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@supabase/supabase-js";
 import AuthForm from "@/components/auth/AuthForm";
-import VerificationForm from "@/components/VerificationForm";
-import TrendingTopics from "@/components/TrendingTopics";
+import { VerificationForm } from "@/components/VerificationForm";
+import { TrendingTopics } from "@/components/TrendingTopics";
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -44,7 +44,10 @@ const Index = () => {
             Sign Out
           </button>
         </div>
-        <VerificationForm />
+        <VerificationForm onVerify={(statement: string) => {
+          console.log("Verifying statement:", statement);
+          // TODO: Implement verification logic
+        }} />
         <TrendingTopics />
       </div>
     </div>

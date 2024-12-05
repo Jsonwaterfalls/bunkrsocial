@@ -4,7 +4,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 
-export const VerificationForm = () => {
+interface VerificationFormProps {
+  onVerify: (statement: string) => void;
+}
+
+export const VerificationForm = ({ onVerify }: VerificationFormProps) => {
   const [statement, setStatement] = useState("");
   const [isVerifying, setIsVerifying] = useState(false);
   const { toast } = useToast();
@@ -20,10 +24,11 @@ export const VerificationForm = () => {
     }
 
     setIsVerifying(true);
-    // TODO: Implement actual verification logic
-    setTimeout(() => {
+    try {
+      onVerify(statement);
+    } finally {
       setIsVerifying(false);
-    }, 2000);
+    }
   };
 
   return (

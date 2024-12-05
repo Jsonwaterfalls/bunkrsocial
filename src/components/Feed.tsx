@@ -2,12 +2,23 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PostCard } from "./PostCard";
 import { ScrollArea } from "./ui/scroll-area";
+import { useState, useEffect } from "react";
+import { Button } from "./ui/button";
 
 export const Feed = () => {
+  const [user, setUser] = useState<any>(null);
+  const [feedType, setFeedType] = useState<"all" | "following">("all");
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user);
+    });
+  }, []);
+
   const { data: posts, isLoading } = useQuery({
-    queryKey: ["posts"],
+    queryKey: ["posts", feedType, user?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query = supabase
         .from("posts")
         .select(`
           *,
@@ -15,6 +26,22 @@ export const Feed = () => {
         `)
         .order("created_at", { ascending: false });
 
+      if (feedType === "following" && user?.id) {
+        const { data: followingIds } = await supabase
+          .from("follows")
+          .select("following_id")
+          .eq("follower_id", user.id);
+
+        const followingUserIds = followingIds?.map(f => f.following_id) || [];
+        
+        if (followingUserIds.length > 0) {
+          query = query.in("user_id", followingUserIds);
+        } else {
+          return []; // Return empty array if not following anyone
+        }
+      }
+
+      const { data, error } = await query;
       if (error) throw error;
       return data;
     },
@@ -29,12 +56,35 @@ export const Feed = () => {
   }
 
   return (
-    <ScrollArea className="h-[600px] w-full rounded-md border p-4">
-      <div className="space-y-4">
-        {posts?.map((post) => (
-          <PostCard key={post.id} post={post} />
-        ))}
+    <div className="space-y-4">
+      <div className="flex gap-2">
+        <Button
+          variant={feedType === "all" ? "default" : "outline"}
+          onClick={() => setFeedType("all")}
+        >
+          All Posts
+        </Button>
+        <Button
+          variant={feedType === "following" ? "default" : "outline"}
+          onClick={() => setFeedType("following")}
+        >
+          Following
+        </Button>
       </div>
-    </ScrollArea>
+      <ScrollArea className="h-[600px] w-full rounded-md border p-4">
+        <div className="space-y-4">
+          {posts?.map((post) => (
+            <PostCard key={post.id} post={post} />
+          ))}
+          {posts?.length === 0 && (
+            <div className="text-center text-muted-foreground py-8">
+              {feedType === "following" 
+                ? "No posts from users you follow. Start following some users!"
+                : "No posts yet. Be the first to post!"}
+            </div>
+          )}
+        </div>
+      </ScrollArea>
+    </div>
   );
 };

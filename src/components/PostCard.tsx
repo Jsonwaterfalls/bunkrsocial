@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardFooter } from "./ui/card";
 import { Button } from "./ui/button";
 import { MessageSquare } from "lucide-react";
@@ -6,10 +6,12 @@ import { formatDistanceToNow } from "date-fns";
 import { CommentSection } from "./CommentSection";
 import { PostReactions } from "./PostReactions";
 import { supabase } from "@/integrations/supabase/client";
+import { FollowButton } from "./FollowButton";
 
 interface PostCardProps {
   post: {
     id: string;
+    user_id: string;
     statement: string;
     created_at: string;
     verification_results: Array<{
@@ -25,12 +27,11 @@ export const PostCard = ({ post }: PostCardProps) => {
   const [showComments, setShowComments] = useState(false);
   const [user, setUser] = useState<any>(null);
 
-  // Get the current user on component mount
-  useState(() => {
+  useEffect(() => {
     supabase.auth.getUser().then(({ data: { user } }) => {
       setUser(user);
     });
-  });
+  }, []);
 
   const getVerdictColor = (verdict: string) => {
     switch (verdict.toLowerCase()) {
@@ -46,9 +47,12 @@ export const PostCard = ({ post }: PostCardProps) => {
   return (
     <Card className="w-full animate-fadeIn">
       <CardHeader className="pb-2">
-        <p className="text-sm text-muted-foreground">
-          {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
-        </p>
+        <div className="flex justify-between items-center">
+          <p className="text-sm text-muted-foreground">
+            {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
+          </p>
+          <FollowButton targetUserId={post.user_id} currentUserId={user?.id} />
+        </div>
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-lg">{post.statement}</p>

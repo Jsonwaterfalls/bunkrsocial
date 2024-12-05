@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface VerificationFormProps {
   onVerify: (statement: string) => void;
@@ -25,7 +26,43 @@ export const VerificationForm = ({ onVerify }: VerificationFormProps) => {
 
     setIsVerifying(true);
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        toast({
+          title: "Error",
+          description: "You must be logged in to verify statements",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const { data: post, error: postError } = await supabase
+        .from('posts')
+        .insert([
+          { user_id: user.id, statement: statement.trim() }
+        ])
+        .select()
+        .single();
+
+      if (postError) {
+        throw postError;
+      }
+
       onVerify(statement);
+      setStatement("");
+      
+      toast({
+        title: "Success",
+        description: "Your statement has been submitted for verification",
+      });
+    } catch (error) {
+      console.error('Error creating post:', error);
+      toast({
+        title: "Error",
+        description: "Failed to submit statement for verification",
+        variant: "destructive",
+      });
     } finally {
       setIsVerifying(false);
     }

@@ -1,6 +1,12 @@
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Share2 } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 interface LLMResult {
   model: string;
@@ -36,11 +42,22 @@ export const ResultCard = ({ statement, results }: ResultCardProps) => {
       
       <p className="text-sage mb-6 italic">&quot;{statement}&quot;</p>
       
-      <div className="space-y-6">
+      <Accordion type="single" collapsible className="w-full">
         {results.map((result, index) => (
-          <div key={index} className="border-b pb-4 last:border-b-0">
-            <div className="flex justify-between items-center mb-2">
-              <h4 className="font-medium text-navy">{result.model}</h4>
+          <AccordionItem key={index} value={`item-${index}`}>
+            <AccordionTrigger className="flex justify-between items-center py-4">
+              <div className="flex items-center gap-4">
+                <div
+                  className={`w-3 h-3 rounded-full ${
+                    result.verdict === "true"
+                      ? "bg-green-500"
+                      : result.verdict === "false"
+                      ? "bg-red-500"
+                      : "bg-yellow-500"
+                  }`}
+                />
+                <span className="font-medium text-navy">{result.model}</span>
+              </div>
               <span
                 className={`px-3 py-1 rounded-full text-sm ${
                   result.verdict === "true"
@@ -52,11 +69,13 @@ export const ResultCard = ({ statement, results }: ResultCardProps) => {
               >
                 {result.confidence}% confident
               </span>
-            </div>
-            <p className="text-sage-light text-sm">{result.reasoning}</p>
-          </div>
+            </AccordionTrigger>
+            <AccordionContent>
+              <p className="text-sage-light text-sm pl-7">{result.reasoning}</p>
+            </AccordionContent>
+          </AccordionItem>
         ))}
-      </div>
+      </Accordion>
     </Card>
   );
 };

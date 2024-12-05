@@ -9,7 +9,68 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      posts: {
+        Row: {
+          created_at: string | null
+          id: string
+          statement: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          statement: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          statement?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      verification_results: {
+        Row: {
+          confidence: number
+          created_at: string | null
+          id: string
+          model: string
+          post_id: string | null
+          reasoning: string
+          verdict: string
+        }
+        Insert: {
+          confidence: number
+          created_at?: string | null
+          id?: string
+          model: string
+          post_id?: string | null
+          reasoning: string
+          verdict: string
+        }
+        Update: {
+          confidence?: number
+          created_at?: string | null
+          id?: string
+          model?: string
+          post_id?: string | null
+          reasoning?: string
+          verdict?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "verification_results_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import AuthForm from "@/components/auth/AuthForm";
 import { VerificationForm } from "@/components/VerificationForm";
 import { ResultCard } from "@/components/ResultCard";
+import { Feed } from "@/components/Feed";
 import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
@@ -51,6 +52,10 @@ const Index = () => {
             results={verificationResults}
           />
         )}
+        <div className="mt-8">
+          <h2 className="text-2xl font-semibold mb-4">Recent Verifications</h2>
+          <Feed />
+        </div>
       </div>
     </div>
   );

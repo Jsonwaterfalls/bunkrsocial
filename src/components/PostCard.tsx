@@ -4,6 +4,8 @@ import { Button } from "./ui/button";
 import { MessageSquare } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { CommentSection } from "./CommentSection";
+import { PostReactions } from "./PostReactions";
+import { useAuth } from "@supabase/auth-helpers-react";
 
 interface PostCardProps {
   post: {
@@ -21,6 +23,7 @@ interface PostCardProps {
 
 export const PostCard = ({ post }: PostCardProps) => {
   const [showComments, setShowComments] = useState(false);
+  const { user } = useAuth();
 
   const getVerdictColor = (verdict: string) => {
     switch (verdict.toLowerCase()) {
@@ -60,14 +63,17 @@ export const PostCard = ({ post }: PostCardProps) => {
         </div>
       </CardContent>
       <CardFooter className="flex flex-col items-stretch gap-4">
-        <Button
-          variant="ghost"
-          className="w-full justify-start gap-2"
-          onClick={() => setShowComments(!showComments)}
-        >
-          <MessageSquare className="h-4 w-4" />
-          Comments
-        </Button>
+        <div className="flex justify-between items-center">
+          <PostReactions postId={post.id} userId={user?.id} />
+          <Button
+            variant="ghost"
+            className="gap-2"
+            onClick={() => setShowComments(!showComments)}
+          >
+            <MessageSquare className="h-4 w-4" />
+            Comments
+          </Button>
+        </div>
         {showComments && <CommentSection postId={post.id} />}
       </CardFooter>
     </Card>

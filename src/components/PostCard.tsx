@@ -1,5 +1,9 @@
-import { Card, CardContent, CardHeader } from "./ui/card";
+import { useState } from "react";
+import { Card, CardContent, CardHeader, CardFooter } from "./ui/card";
+import { Button } from "./ui/button";
+import { MessageSquare } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { CommentSection } from "./CommentSection";
 
 interface PostCardProps {
   post: {
@@ -16,6 +20,8 @@ interface PostCardProps {
 }
 
 export const PostCard = ({ post }: PostCardProps) => {
+  const [showComments, setShowComments] = useState(false);
+
   const getVerdictColor = (verdict: string) => {
     switch (verdict.toLowerCase()) {
       case "true":
@@ -28,7 +34,7 @@ export const PostCard = ({ post }: PostCardProps) => {
   };
 
   return (
-    <Card className="w-full animate-fade-in">
+    <Card className="w-full animate-fadeIn">
       <CardHeader className="pb-2">
         <p className="text-sm text-muted-foreground">
           {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
@@ -53,6 +59,17 @@ export const PostCard = ({ post }: PostCardProps) => {
           ))}
         </div>
       </CardContent>
+      <CardFooter className="flex flex-col items-stretch gap-4">
+        <Button
+          variant="ghost"
+          className="w-full justify-start gap-2"
+          onClick={() => setShowComments(!showComments)}
+        >
+          <MessageSquare className="h-4 w-4" />
+          Comments
+        </Button>
+        {showComments && <CommentSection postId={post.id} />}
+      </CardFooter>
     </Card>
   );
 };

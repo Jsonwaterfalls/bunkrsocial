@@ -32,21 +32,38 @@ const Index = () => {
     setVerificationResults(results);
   };
 
+  const Logo = () => (
+    <div className="w-full flex justify-center mb-8">
+      <img 
+        src="/lovable-uploads/a5ee792f-382d-46d5-a8c9-052452bf3e6e.png" 
+        alt="BUNKr Logo" 
+        className="h-16 md:h-20"
+      />
+    </div>
+  );
+
   if (!session) {
-    return <AuthForm />;
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <Logo />
+        <AuthForm />
+      </div>
+    );
   }
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-4xl mx-auto space-y-8">
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold">Bunkr</h1>
-          <button
-            onClick={() => supabase.auth.signOut()}
-            className="text-sm text-gray-600 hover:underline"
-          >
-            Sign Out
-          </button>
+        <div className="flex flex-col items-center">
+          <Logo />
+          <div className="w-full flex justify-end">
+            <button
+              onClick={() => supabase.auth.signOut()}
+              className="text-sm text-gray-600 hover:underline"
+            >
+              Sign Out
+            </button>
+          </div>
         </div>
 
         <Tabs defaultValue="verify" className="w-full">

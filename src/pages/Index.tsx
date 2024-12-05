@@ -35,7 +35,7 @@ const Index = () => {
   const Logo = () => (
     <div className="w-full flex justify-center mb-8">
       <img 
-        src="/lovable-uploads/a5ee792f-382d-46d5-a8c9-052452bf3e6e.png" 
+        src="/lovable-uploads/bbbcc199-7eed-436a-864f-91dc9f0a1df4.png" 
         alt="BUNKr Logo" 
         className="h-16 md:h-20"
       />

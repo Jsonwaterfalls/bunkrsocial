@@ -1,13 +1,8 @@
 import { useEffect, useState } from "react";
-import { createClient } from "@supabase/supabase-js";
 import AuthForm from "@/components/auth/AuthForm";
 import { VerificationForm } from "@/components/VerificationForm";
 import { TrendingTopics } from "@/components/TrendingTopics";
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-);
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   const [session, setSession] = useState<any>(null);

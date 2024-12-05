@@ -19,7 +19,7 @@ export const TrendingTopics = () => {
   return (
     <Card className="p-6 w-full max-w-2xl mx-auto mt-6 animate-fadeIn">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-xl font-semibold text-navy">Trending Topics</h3>
+        <h3 className="text-xl font-semibold text-[#0cc0df]">Trending Topics</h3>
         <div className="space-x-2">
           {(["day", "week", "quarter"] as TimeRange[]).map((range) => (
             <Button

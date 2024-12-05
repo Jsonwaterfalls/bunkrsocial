@@ -19,7 +19,7 @@ export const VerificationForm = ({ onVerify }: VerificationFormProps) => {
 
   return (
     <Card className="p-6 w-full max-w-2xl mx-auto animate-fadeIn">
-      <h2 className="text-2xl font-bold text-navy mb-4">Verify a Statement</h2>
+      <h2 className="text-2xl font-bold text-[#0cc0df] mb-4">Verify a Statement</h2>
       <Textarea
         placeholder="Enter a statement to verify..."
         value={statement}

@@ -5,6 +5,7 @@ import { ResultCard } from "@/components/ResultCard";
 import { Feed } from "@/components/Feed";
 import { SearchUsers } from "@/components/SearchUsers";
 import { TrendingTopics } from "@/components/TrendingTopics";
+import { NotificationsPopover } from "@/components/NotificationsPopover";
 import { supabase } from "@/integrations/supabase/client";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -156,11 +157,19 @@ const Index = () => {
             <div className="flex items-center gap-4">
               <div className="relative">
                 <Avatar className="h-16 w-16">
-                  <AvatarImage src={profile?.avatar_url ? `https://rwmfoqgrvinrcxkjtzdz.supabase.co/storage/v1/object/public/avatars/${profile.avatar_url}` : undefined} />
-                  <AvatarFallback>{profile?.username?.charAt(0).toUpperCase()}</AvatarFallback>
+                  <AvatarImage
+                    src={
+                      profile?.avatar_url
+                        ? `https://rwmfoqgrvinrcxkjtzdz.supabase.co/storage/v1/object/public/avatars/${profile.avatar_url}`
+                        : undefined
+                    }
+                  />
+                  <AvatarFallback>
+                    {profile?.username?.charAt(0).toUpperCase()}
+                  </AvatarFallback>
                 </Avatar>
-                <label 
-                  htmlFor="avatar-upload" 
+                <label
+                  htmlFor="avatar-upload"
                   className="absolute bottom-0 right-0 p-1 bg-primary rounded-full cursor-pointer hover:bg-primary/80 transition-colors"
                 >
                   <Upload className="h-4 w-4" />
@@ -180,17 +189,22 @@ const Index = () => {
                   placeholder="Update username"
                   defaultValue={profile?.username || ""}
                 />
-                <Button type="submit" size="sm">Update</Button>
+                <Button type="submit" size="sm">
+                  Update
+                </Button>
               </form>
             </div>
-            <Button
-              variant="ghost"
-              onClick={() => supabase.auth.signOut()}
-              className="text-sm"
-            >
-              <LogOut className="h-4 w-4 mr-2" />
-              Sign Out
-            </Button>
+            <div className="flex items-center gap-2">
+              <NotificationsPopover />
+              <Button
+                variant="ghost"
+                onClick={() => supabase.auth.signOut()}
+                className="text-sm"
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Sign Out
+              </Button>
+            </div>
           </div>
         </div>
 

@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Card } from "@/components/ui/card";
+import { Button } from "./ui/button";
+import { Textarea } from "./ui/textarea";
 import { useVerification } from "@/hooks/useVerification";
 import { VoiceRecorder } from "./VoiceRecorder";
 
@@ -11,38 +10,36 @@ interface VerificationFormProps {
 
 export const VerificationForm = ({ onVerify }: VerificationFormProps) => {
   const [statement, setStatement] = useState("");
-  const { isVerifying, verifyStatement } = useVerification(onVerify);
+  const { verify, isVerifying } = useVerification();
 
-  const handleVerification = async () => {
-    await verifyStatement(statement);
-    setStatement("");
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!statement.trim()) return;
+
+    const results = await verify(statement);
+    if (results) {
+      onVerify(statement, results);
+    }
   };
 
-  const handleTranscriptionComplete = (transcribedText: string) => {
-    setStatement(transcribedText);
+  const handleTranscription = (text: string) => {
+    setStatement(text);
   };
 
   return (
-    <Card className="p-6 w-full max-w-2xl mx-auto animate-fadeIn">
-      <h2 className="text-2xl font-bold text-[#0cc0df] mb-4">Verify a Statement</h2>
-      <div className="space-y-4">
-        <VoiceRecorder onTranscriptionComplete={handleTranscriptionComplete} />
-        <div className="relative">
-          <Textarea
-            placeholder="Enter a statement to verify..."
-            value={statement}
-            onChange={(e) => setStatement(e.target.value)}
-            className="min-h-[120px]"
-          />
-        </div>
-        <Button
-          onClick={handleVerification}
-          disabled={isVerifying}
-          className="w-full bg-navy hover:bg-navy-light"
-        >
-          {isVerifying ? "Verifying..." : "Verify Statement"}
-        </Button>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="flex items-start gap-2">
+        <Textarea
+          value={statement}
+          onChange={(e) => setStatement(e.target.value)}
+          placeholder="Enter a statement to verify..."
+          className="min-h-[100px]"
+        />
+        <VoiceRecorder onTranscription={handleTranscription} />
       </div>
-    </Card>
+      <Button type="submit" disabled={isVerifying || !statement.trim()}>
+        {isVerifying ? "Verifying..." : "Verify Statement"}
+      </Button>
+    </form>
   );
 };

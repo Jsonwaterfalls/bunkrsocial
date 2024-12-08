@@ -162,3 +162,4 @@ export const NotificationsPopover = () => {
       </PopoverContent>
     </Popover>
   );
+};

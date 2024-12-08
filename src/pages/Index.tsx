@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import AuthForm from "@/components/auth/AuthForm";
 import { VerificationForm } from "@/components/VerificationForm";
 import { ResultCard } from "@/components/ResultCard";
@@ -12,7 +13,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { LogOut, Upload } from "lucide-react";
+import { LogOut, Upload, User } from "lucide-react";
 
 const Index = () => {
   const [session, setSession] = useState<any>(null);
@@ -196,6 +197,11 @@ const Index = () => {
             </div>
             <div className="flex items-center gap-2">
               <NotificationsPopover />
+              <Link to={`/profile/${session?.user.id}`}>
+                <Button variant="ghost" size="icon">
+                  <User className="h-4 w-4" />
+                </Button>
+              </Link>
               <Button
                 variant="ghost"
                 onClick={() => supabase.auth.signOut()}

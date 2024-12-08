@@ -10,16 +10,12 @@ interface VerificationFormProps {
 
 export const VerificationForm = ({ onVerify }: VerificationFormProps) => {
   const [statement, setStatement] = useState("");
-  const { verify, isVerifying } = useVerification();
+  const { isVerifying, verifyStatement } = useVerification(onVerify);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!statement.trim()) return;
-
-    const results = await verify(statement);
-    if (results) {
-      onVerify(statement, results);
-    }
+    await verifyStatement(statement);
   };
 
   const handleTranscription = (text: string) => {
